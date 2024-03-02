@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Field, PasswordField } from "../common/Field";
 import loginSchema from "../../schema/loginSchema";
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -14,6 +16,7 @@ export default function LoginForm() {
 
   const onSubmit = (data) => {
     console.log(data);
+    navigate("/");
   };
 
   const { email, password } = errors || {};
