@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Field, PasswordField } from "../common/Field";
 import loginSchema from "../../schema/loginSchema";
+import { useAuth } from "../../hooks";
 
 export default function LoginForm() {
+  const { onAuth } = useAuth();
   const navigate = useNavigate();
   const {
     register,
@@ -15,7 +17,7 @@ export default function LoginForm() {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    onAuth({ user: { ...data } });
     navigate("/");
   };
 

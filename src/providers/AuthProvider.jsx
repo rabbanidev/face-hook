@@ -1,10 +1,21 @@
 /* eslint-disable react/prop-types */
 
+import { useState } from "react";
 import { AuthContext } from "../contexts";
 import PropTypes from "prop-types";
 
 export default function AuthProvider({ children }) {
-  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
+  const [auth, setAuth] = useState(null);
+
+  const onAuth = (updatedAuth) => {
+    setAuth({ ...auth, ...updatedAuth });
+  };
+
+  return (
+    <AuthContext.Provider value={{ auth, onAuth }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 AuthProvider.prototype = {
