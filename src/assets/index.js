@@ -2,7 +2,7 @@ import threeDots from "./icons/3dots.svg";
 import addPhoto from "./icons/addPhoto.svg";
 import camera from "./icons/camera.svg";
 import close from "./icons/close.svg";
-import comments from "./icons/comments.svg";
+import comment from "./icons/comment.svg";
 import deleteIcon from "./icons/delete.svg";
 import edit from "./icons/edit.svg";
 import home from "./icons/home.svg";
@@ -21,12 +21,12 @@ const assets = {
     logo,
     authIllustration,
   },
-  icnos: {
+  icons: {
     threeDots,
     addPhoto,
     camera,
     close,
-    comments,
+    comment,
     deleteIcon,
     edit,
     home,
