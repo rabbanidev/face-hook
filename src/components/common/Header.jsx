@@ -1,13 +1,21 @@
 import { Link } from "react-router-dom";
 import assets from "../../assets";
 import Logout from "../auth/Logout";
-import { useAuth } from "../../hooks";
+import { useAuth, useProfile } from "../../hooks";
 import { getImageUrl } from "../../utils";
 
 export default function Header() {
   const { auth } = useAuth();
-  const { firstName, lastName, avatar } = auth?.user || {};
-  const fullName = firstName + " " + lastName;
+  const { user } = useProfile();
+
+  let fullName, avatar;
+  if (user) {
+    fullName = `${user.firstName}  ${user.lastName}`;
+    avatar = user.avatar;
+  } else {
+    fullName = `${auth.user.firstName}  ${auth.user.lastName}`;
+    avatar = auth.user.avatar;
+  }
 
   return (
     <nav className="sticky top-0 z-50 border-b border-[#3F3F3F] bg-[#1E1F24] py-4">

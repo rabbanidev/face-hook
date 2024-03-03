@@ -1,18 +1,25 @@
-import { useEffect } from "react";
-import { useAuth, useAxios } from "../../hooks";
+import { useQuery } from "react-query";
+import { useAuth, useAxios, useProfile } from "../../hooks";
+import { getProfile } from "../../api/profile";
 
 export default function Profile() {
   const { api } = useAxios();
   const { auth } = useAuth();
+  const { onUpdateUser, onUpdatePosts } = useProfile();
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      const res = await api.get(`/profile/${auth.user.id}`);
-      console.log(res);
-    };
+  const handleProfileSuccess = (profileData) => {
+    onUpdateUser(profileData.user);
+    onUpdatePosts(profileData.posts);
+  };
 
-    fetchProfileData();
-  }, [api, auth.user.id]);
+  const { data, error, isLoading } = useQuery(
+    ["profile", auth.user.id],
+    () => getProfile(api, auth.user.id),
+    {
+      enabled: !!auth.user.id,
+      onSuccess: handleProfileSuccess,
+    }
+  );
 
-  return <div>Profile</div>;
+  return <></>;
 }
