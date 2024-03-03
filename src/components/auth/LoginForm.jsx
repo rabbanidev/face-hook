@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Field, PasswordField } from "../common/Field";
 import loginSchema from "../../schema/loginSchema";
 import { useAuth } from "../../hooks";
+import api from "../../api/axios";
 
 export default function LoginForm() {
   const { onAuth } = useAuth();
@@ -13,12 +14,32 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
+    defaultValues: {
+      email: "saadh392@mail.com",
+      password: "bestPassw0rd",
+    },
     resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit = (data) => {
-    onAuth({ user: { ...data } });
-    navigate("/");
+  const onSubmit = async (formData) => {
+    try {
+      const { status, data } = await api.post("/auth/login", formData);
+
+      if (status === 200 && data) {
+        const { token, user } = data;
+        const { token: authToken, refreshToken } = token;
+
+        onAuth({
+          user,
+          authToken,
+          refreshToken,
+        });
+
+        navigate("/");
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   const { email, password } = errors || {};
