@@ -5,7 +5,11 @@ import { AuthContext } from "../contexts";
 import PropTypes from "prop-types";
 
 export default function AuthProvider({ children }) {
-  const [auth, setAuth] = useState(null);
+  const [auth, setAuth] = useState({
+    user: null,
+    authToken: "",
+    refreshToken: "",
+  });
 
   const onAuth = (updatedAuth) => {
     setAuth({ ...auth, ...updatedAuth });

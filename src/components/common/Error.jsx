@@ -6,7 +6,7 @@ export default function Error({ error }) {
   }
 
   return (
-    <div role="alert" className="text-red-600">
+    <div role="alert" className="mt-2 text-red-400">
       {error}
     </div>
   );

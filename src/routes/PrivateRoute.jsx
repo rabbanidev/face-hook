@@ -5,7 +5,7 @@ import Header from "../components/common/Header";
 export default function PrivateRoute() {
   const { auth } = useAuth();
 
-  return auth ? (
+  return auth.user ? (
     <>
       <Header />
       <main className="mx-auto max-w-[1020px] py-8">

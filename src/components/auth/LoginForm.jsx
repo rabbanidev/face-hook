@@ -4,11 +4,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Field, PasswordField } from "../common/Field";
 import loginSchema from "../../schema/loginSchema";
 import { useAuth } from "../../hooks";
-import api from "../../api/axios";
+import { useMutation } from "react-query";
+import { login } from "../../api/auth";
+import Error from "../common/Error";
 
 export default function LoginForm() {
   const { onAuth } = useAuth();
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -21,27 +24,29 @@ export default function LoginForm() {
     resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit = async (formData) => {
-    try {
-      const { status, data } = await api.post("/auth/login", formData);
-
-      if (status === 200 && data) {
-        const { token, user } = data;
-        const { token: authToken, refreshToken } = token;
-
-        onAuth({
-          user,
-          authToken,
-          refreshToken,
-        });
-
-        navigate("/");
-      }
-    } catch (error) {
-      console.log("error", error);
-    }
+  // Update auth state and redirect to home page when user is logged in successfully
+  const handleSuccessLogin = (loginData) => {
+    const { token, user } = loginData;
+    const { token: authToken, refreshToken } = token;
+    onAuth({
+      user,
+      authToken,
+      refreshToken,
+    });
+    navigate("/");
   };
 
+  const { mutate, isLoading, isError, error } = useMutation({
+    mutationFn: login,
+    onSuccess: handleSuccessLogin,
+  });
+
+  // Form Submit handler
+  const onSubmit = (formData) => {
+    mutate(formData);
+  };
+
+  // Destructure form errors
   const { email, password } = errors || {};
 
   return (
@@ -69,9 +74,12 @@ export default function LoginForm() {
       <button
         className="auth-input bg-lwsGreen font-bold text-deepDark transition-all hover:opacity-90"
         type="submit"
+        disabled={isLoading}
       >
-        Login
+        {isLoading ? "Loading..." : " Login"}
       </button>
+
+      {isError && <Error error={error?.data?.error || error?.message} />}
     </form>
   );
 }

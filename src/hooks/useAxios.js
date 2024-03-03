@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import api from "../api/axios";
 import useAuth from "./useAuth";
+import { getRefreshToken } from "../api/auth";
 
 export default function useAxios() {
-  const { authToken, refreshToken, onAuth } = useAuth();
+  const { auth, onAuth } = useAuth();
+  const { authToken, refreshToken } = auth || {};
 
   useEffect(() => {
     // add a request interceptors
@@ -29,17 +31,15 @@ export default function useAxios() {
       async (error) => {
         const originalRequest = error.config;
 
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           try {
-            const resp = await api.post("/auth/refresh-token", {
-              refreshToken,
-            });
-
-            const { token: newAuthToken } = resp.data;
+            const response = await getRefreshToken(refreshToken);
+            const { token: newAuthToken } = response;
 
             console.log("New Token:", newAuthToken);
+
             // Set new auth token in state
             onAuth({ authToken: newAuthToken });
 
@@ -48,6 +48,12 @@ export default function useAxios() {
             return api(originalRequest);
           } catch (error) {
             // Handle refresh token error or redirect to login
+            onAuth({
+              user: null,
+              authToken: "",
+              refreshToken: "",
+            });
+
             return Promise.reject(error);
           }
         }

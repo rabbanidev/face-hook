@@ -7,7 +7,11 @@ export default function Logout() {
   const { onAuth } = useAuth();
 
   const handleLogout = () => {
-    onAuth({ user: null });
+    onAuth({
+      user: null,
+      authToken: "",
+      refreshToken: "",
+    });
     navigate("/login");
   };
 
